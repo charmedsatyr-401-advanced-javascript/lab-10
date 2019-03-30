@@ -1,6 +1,5 @@
 'use strict';
 
-require('dotenv').config();
 const router = require('./api/v1.js');
 
 // Application Dependencies
