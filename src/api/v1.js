@@ -1,27 +1,23 @@
 'use strict';
 
-require('dotenv').config();
-
-// Application Dependencies
+// Application dependencies
 const express = require('express');
-const pg = require('pg');
 const superagent = require('superagent');
 const methodOverride = require('method-override');
 
-// Application Setup
-const app = express();
-const PORT = process.env.PORT;
+const router = express.Router();
 
-// Database Setup
-const client = new pg.Client(process.env.DATABASE_URL);
-client.connect();
-client.on('error', err => console.error(err));
+const cwd = process.cwd();
+const modelFinder = require('../middleware/model-finder.js');
 
-// Application Middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+// Application middleware
+router.use(express.urlencoded({ extended: true }));
+router.use(express.static('public'));
 
-app.use(
+// Evaluate the model, dynamically
+router.use(modelFinder);
+
+router.use(
   methodOverride((request, response) => {
     if (request.body && typeof request.body === 'object' && '_method' in request.body) {
       // look in urlencoded POST bodies and delete it
@@ -32,21 +28,18 @@ app.use(
   })
 );
 
-// Set the view engine for server-side templating
-app.set('view engine', 'ejs');
-
 // API Routes
-app.get('/', getBooks);
-app.post('/searches', createSearch);
-app.get('/searches/new', newSearch);
-app.get('/books/:id', getBook);
-app.post('/books', createBook);
-app.put('/books/:id', updateBook);
-app.delete('/books/:id', deleteBook);
+router.get('/', getBooks);
+/*
+router.post('/searches', createSearch);
+router.get('/searches/new', newSearch);
+router.get('/books/:id', getBook);
+router.post('/books', createBook);
+router.put('/books/:id', updateBook);
+router.delete('/books/:id', deleteBook);
+*/
 
-app.get('*', (request, response) => response.status(404).send('This route does not exist'));
-
-app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
+router.get('*', (request, response) => response.status(404).send('This route does not exist'));
 
 // HELPER FUNCTIONS
 function Book(info) {
@@ -63,10 +56,8 @@ function Book(info) {
 }
 
 function getBooks(request, response) {
-  let SQL = 'SELECT * FROM books;';
-
-  return client
-    .query(SQL)
+  request.model
+    .get()
     .then(results => {
       if (results.rows.rowCount === 0) {
         response.render('pages/searches/new');
@@ -77,6 +68,7 @@ function getBooks(request, response) {
     .catch(err => handleError(err, response));
 }
 
+/*
 function createSearch(request, response) {
   let url = 'https://www.googleapis.com/books/v1/volumes?q=';
 
@@ -112,6 +104,7 @@ function getBook(request, response) {
       .catch(err => handleError(err, response));
   });
 }
+*/
 
 function getBookshelves() {
   // let SQL = 'SELECT DISTINCT bookshelf FROM books ORDER BY bookshelf;';
@@ -120,6 +113,7 @@ function getBookshelves() {
   return client.query(SQL);
 }
 
+/*
 function createShelf(shelf) {
   let normalizedShelf = shelf.toLowerCase();
   let SQL1 = `SELECT id from bookshelves where name=$1;`;
@@ -175,7 +169,10 @@ function deleteBook(request, response) {
     .then(response.redirect('/'))
     .catch(err => handleError(err, response));
 }
+*/
 
 function handleError(error, response) {
   response.render('pages/error', { error: error });
 }
+
+module.exports = router;
