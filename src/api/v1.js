@@ -70,14 +70,20 @@ function getBooks(request, response) {
   const { id } = request.params;
   request.model
     .get(id)
-    .then(shelves => {
+    .then(results => {
+      const bookResults = results[0];
+      const shelves = results[1];
+      // getBook
       if (id) {
-        console.log('getBooks: shelves.rows:', shelves.rows);
-        response.render('pages/books/show', { book: shelves.rows[0], bookshelves: shelves.rows });
-      } else if (shelves.rows.rowCount === 0) {
+        response.render('pages/books/show', {
+          book: bookResults.rows[0],
+          bookshelves: shelves.rows,
+        });
+        // getBooks
+      } else if (bookResults.rows.rowCount === 0) {
         response.render('pages/searches/new');
       } else {
-        response.render('pages/index', { books: shelves.rows });
+        response.render('pages/index', { books: bookResults.rows });
       }
     })
     .catch(err => handleError(err, response));
@@ -94,22 +100,18 @@ function createBook(request, response) {
 
 // PUT
 function updateBook(request, response) {
-  console.log('PUT: request.body.bookshelf:', request.body.bookshelf);
-  console.log('PUT, updateBook', request);
   const { body } = request;
   const { id } = request.params;
 
   request.model
     .put(body, id)
-    .then(response.redirect(`/books/${id}`))
+    .then(result => response.redirect(`/books/${id}`))
     .catch(err => handleError(err, response));
 }
 
 // DELETE
 function deleteBook(request, response) {
-  console.log('Request body for DELETE:', request.body);
   const { id } = request.params;
-  console.log('THIS IS THE ID:', id);
   request.model
     .delete(id)
     .then(result => response.redirect('/'))
