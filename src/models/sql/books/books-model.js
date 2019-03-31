@@ -5,6 +5,4 @@ const SQLModel = require('../sql-model.js');
 
 class Books extends SQLModel {}
 
-const books = new Books(client);
-
-module.exports = books;
+module.exports = new Books(client);
