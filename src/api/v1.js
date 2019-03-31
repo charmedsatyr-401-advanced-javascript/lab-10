@@ -32,17 +32,22 @@ router.use(
 );
 
 // API Routes
+// GET
 router.get('/', getBooks);
 router.get('/books/:id', getBooks);
-router.post('/books', createBook);
-
-router.post('/searches', createSearch);
 router.get('/searches/new', newSearch);
 
+// POST
+router.post('/books', createBook);
+router.post('/searches', createSearch);
+
+// PUT
 router.put('/books/:id', updateBook);
 
+// DELETE
 router.delete('/books/:id', deleteBook);
 
+// ERROR
 router.get('*', handleMissing);
 router.use(handleError);
 
@@ -65,11 +70,14 @@ function getBooks(request, response) {
   const { id } = request.params;
   request.model
     .get(id)
-    .then(results => {
-      if (results.rows.rowCount === 0) {
+    .then(shelves => {
+      if (id) {
+        console.log('getBooks: shelves.rows:', shelves.rows);
+        response.render('pages/books/show', { book: shelves.rows[0], bookshelves: shelves.rows });
+      } else if (shelves.rows.rowCount === 0) {
         response.render('pages/searches/new');
       } else {
-        response.render('pages/index', { books: results.rows });
+        response.render('pages/index', { books: shelves.rows });
       }
     })
     .catch(err => handleError(err, response));
@@ -86,6 +94,7 @@ function createBook(request, response) {
 
 // PUT
 function updateBook(request, response) {
+  console.log('PUT: request.body.bookshelf:', request.body.bookshelf);
   console.log('PUT, updateBook', request);
   const { body } = request;
   const { id } = request.params;
@@ -103,7 +112,7 @@ function deleteBook(request, response) {
   console.log('THIS IS THE ID:', id);
   request.model
     .delete(id)
-    .then(response.redirect('/'))
+    .then(result => response.redirect('/'))
     .catch(err => handleError(err, response));
 }
 
