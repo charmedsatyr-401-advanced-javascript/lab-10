@@ -39,10 +39,9 @@ router.post('/books', createBook);
 router.post('/searches', createSearch);
 router.get('/searches/new', newSearch);
 
-/*
 router.put('/books/:id', updateBook);
+
 router.delete('/books/:id', deleteBook);
-*/
 
 router.get('*', handleMissing);
 router.use(handleError);
@@ -61,6 +60,7 @@ function Book(info) {
   this.id = info.industryIdentifiers ? `${info.industryIdentifiers[0].identifier}` : '';
 }
 
+// GET
 function getBooks(request, response) {
   const { id } = request.params;
   request.model
@@ -75,6 +75,7 @@ function getBooks(request, response) {
     .catch(err => handleError(err, response));
 }
 
+// POST
 function createBook(request, response) {
   const { body } = request;
   request.model
@@ -83,6 +84,30 @@ function createBook(request, response) {
     .catch(err => handleError(err, response));
 }
 
+// PUT
+function updateBook(request, response) {
+  console.log('PUT, updateBook', request);
+  const { body } = request;
+  const { id } = request.params;
+
+  request.model
+    .put(body, id)
+    .then(response.redirect(`/books/${id}`))
+    .catch(err => handleError(err, response));
+}
+
+// DELETE
+function deleteBook(request, response) {
+  console.log('Request body for DELETE:', request.body);
+  const { id } = request.params;
+  console.log('THIS IS THE ID:', id);
+  request.model
+    .delete(id)
+    .then(response.redirect('/'))
+    .catch(err => handleError(err, response));
+}
+
+// NON-DATABASE FUNCTIONS
 function createSearch(request, response) {
   let url = 'https://www.googleapis.com/books/v1/volumes?q=';
 
@@ -103,29 +128,5 @@ function createSearch(request, response) {
 function newSearch(request, response) {
   response.render('pages/searches/new');
 }
-
-/*
-function updateBook(request, response) {
-  let { title, author, isbn, image_url, description, bookshelf_id } = request.body;
-  // let SQL = `UPDATE books SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5, bookshelf=$6 WHERE id=$7;`;
-  let SQL = `UPDATE books SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5, bookshelf_id=$6 WHERE id=$7;`;
-  let values = [title, author, isbn, image_url, description, bookshelf_id, request.params.id];
-
-  client
-    .query(SQL, values)
-    .then(response.redirect(`/books/${request.params.id}`))
-    .catch(err => handleError(err, response));
-}
-
-function deleteBook(request, response) {
-  let SQL = 'DELETE FROM books WHERE id=$1;';
-  let values = [request.params.id];
-
-  return client
-    .query(SQL, values)
-    .then(response.redirect('/'))
-    .catch(err => handleError(err, response));
-}
-*/
 
 module.exports = router;
