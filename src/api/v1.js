@@ -10,6 +10,9 @@ const router = express.Router();
 const cwd = process.cwd();
 const modelFinder = require('../middleware/model-finder.js');
 
+const handleMissing = require('../middleware/404.js');
+const handleError = require('../middleware/500.js');
+
 // Application middleware
 router.use(express.urlencoded({ extended: true }));
 router.use(express.static('public'));
@@ -30,16 +33,19 @@ router.use(
 
 // API Routes
 router.get('/', getBooks);
-/*
+router.get('/books/:id', getBooks);
+router.post('/books', createBook);
+
 router.post('/searches', createSearch);
 router.get('/searches/new', newSearch);
-router.get('/books/:id', getBook);
-router.post('/books', createBook);
+
+/*
 router.put('/books/:id', updateBook);
 router.delete('/books/:id', deleteBook);
 */
 
-router.get('*', (request, response) => response.status(404).send('This route does not exist'));
+router.get('*', handleMissing);
+router.use(handleError);
 
 // HELPER FUNCTIONS
 function Book(info) {
@@ -56,8 +62,9 @@ function Book(info) {
 }
 
 function getBooks(request, response) {
+  const { id } = request.params;
   request.model
-    .get()
+    .get(id)
     .then(results => {
       if (results.rows.rowCount === 0) {
         response.render('pages/searches/new');
@@ -68,7 +75,14 @@ function getBooks(request, response) {
     .catch(err => handleError(err, response));
 }
 
-/*
+function createBook(request, response) {
+  const { body } = request;
+  request.model
+    .post(body)
+    .then(result => response.redirect(`/books/${result.rows[0].id}`))
+    .catch(err => handleError(err, response));
+}
+
 function createSearch(request, response) {
   let url = 'https://www.googleapis.com/books/v1/volumes?q=';
 
@@ -90,64 +104,7 @@ function newSearch(request, response) {
   response.render('pages/searches/new');
 }
 
-function getBook(request, response) {
-  getBookshelves().then(shelves => {
-    let SQL =
-      'SELECT books.*, bookshelves.name FROM books INNER JOIN bookshelves on books.bookshelf_id=bookshelves.id WHERE books.id=$1;';
-    let values = [request.params.id];
-    client
-      .query(SQL, values)
-      .then(result => {
-        console.log(shelves.rows);
-        response.render('pages/books/show', { book: result.rows[0], bookshelves: shelves.rows });
-      })
-      .catch(err => handleError(err, response));
-  });
-}
-*/
-
-function getBookshelves() {
-  // let SQL = 'SELECT DISTINCT bookshelf FROM books ORDER BY bookshelf;';
-  let SQL = 'SELECT DISTINCT id, name FROM bookshelves ORDER BY name;';
-
-  return client.query(SQL);
-}
-
 /*
-function createShelf(shelf) {
-  let normalizedShelf = shelf.toLowerCase();
-  let SQL1 = `SELECT id from bookshelves where name=$1;`;
-  let values1 = [normalizedShelf];
-
-  return client.query(SQL1, values1).then(results => {
-    if (results.rowCount) {
-      return results.rows[0].id;
-    } else {
-      let INSERT = `INSERT INTO bookshelves(name) VALUES($1) RETURNING id;`;
-      let insertValues = [shelf];
-
-      return client.query(INSERT, insertValues).then(results => {
-        return results.rows[0].id;
-      });
-    }
-  });
-}
-
-function createBook(request, response) {
-  console.log(request.body.bookshelf);
-  createShelf(request.body.bookshelf).then(id => {
-    let { title, author, isbn, image_url, description } = request.body;
-    let SQL =
-      'INSERT INTO books(title, author, isbn, image_url, description, bookshelf_id) VALUES($1, $2, $3, $4, $5, $6) RETURNING id;';
-    let values = [title, author, isbn, image_url, description, id];
-
-    client
-      .query(SQL, values)
-      .then(result => response.redirect(`/books/${result.rows[0].id}`))
-      .catch(err => handleError(err, response));
-  });
-}
-
 function updateBook(request, response) {
   let { title, author, isbn, image_url, description, bookshelf_id } = request.body;
   // let SQL = `UPDATE books SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5, bookshelf=$6 WHERE id=$7;`;
@@ -170,9 +127,5 @@ function deleteBook(request, response) {
     .catch(err => handleError(err, response));
 }
 */
-
-function handleError(error, response) {
-  response.render('pages/error', { error: error });
-}
 
 module.exports = router;
