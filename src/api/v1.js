@@ -33,9 +33,11 @@ router.use(
 
 // Documentation
 router.use('/docs', express.static(`${cwd}/docs`));
+const swaggerUI = require('swagger-ui-express');
+const swaggerDocument = require(`${cwd}/docs/config/swagger.json`);
+router.use('/api/v1/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // API Routes
-
 // GET
 router.get('/', getBooks);
 router.get('/books/:id', getBooks);

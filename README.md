@@ -12,7 +12,7 @@
 
 #### Documentation
 * [jsdoc](https://shielded-crag-86438.herokuapp.com/docs)
-* [swagger] *Coming soon!*
+* [swagger](https://shielded-crag-86438.herokuapp.com/api/v1/docs)
 
 ### Modules
 `./index.js`
@@ -69,10 +69,6 @@ This module exports an Express `router` that supports the following endpoints an
 
 * `/books/:id` → view a specific book in the collection
 
-* `/api/v1/doc`, Swagger live API documentation (coming soon!)
-
-* `/docs`, JSDocs documentation (coming soon!)
-
 ###### `POST`
 
 * `/books` → post book details to be stored in the database collection
@@ -81,7 +77,7 @@ This module exports an Express `router` that supports the following endpoints an
 
 ###### `PUT`
 
-* `/:id` → modify a book with the given `id`
+* `/books/:id` → modify a book with the given `id`
 
 ###### `DELETE`
 
