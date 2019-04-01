@@ -161,13 +161,13 @@ Exports an instance of a `Books` model that extends the class `SQLModel` from `.
 #### Running the app
 * On a local machine, make sure to configure your `.env` file with `SQL_DATABASE_URL`, `MONGO_URI`, `PORT`, and `DB` values.
 
-* If you are running the application with a PostgreSQL database, make sure the environmental variable `DB=SQL` and that your local installation of PostgreSQL is properly configured.
+* If you are running the application with a PostgreSQL database, make sure the environmental variable `DB=SQL` is set and that your local installation of PostgreSQL is properly configured.
 
-* If you are running the application with a MongoDB database, make sure the environmental variable `DB=MONGO` and that your local installation of MongoDB is properly configured and running.
+* If you are running the application with a MongoDB database, make sure the environmental variable `DB=MONGO` is set and that your local installation of MongoDB is properly configured and running.
 
 * Start the server on your local machine with `npm run start` or `npm run watch`.
 
-* You can use the client UI to interact with the routes as indicated above. The client looks best if viewed as a mobile app.
+* You can use the client UI or other tools to interact with the routes as indicated above.
 
 #### Tests
 * How do you run tests?
@@ -179,7 +179,7 @@ Exports an instance of a `Books` model that extends the class `SQLModel` from `.
 None!
 
 * What assertions need to be / should be made?
-  * All REST methods for the models `SQLModel` and `MongoModel` classes should be tested.
+  * All methods and helper functions for the models `SQLModel` and `MongoModel` classes should be tested.
 
   * End-to-end testing should be performed on the server and routes.
 
