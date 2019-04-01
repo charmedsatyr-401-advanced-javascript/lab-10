@@ -7,7 +7,7 @@ const methodOverride = require('method-override');
 
 const router = express.Router();
 
-const cwd = process.cwd();
+// const cwd = process.cwd();
 const modelFinder = require('../middleware/model-finder.js');
 
 const handleMissing = require('../middleware/404.js');
@@ -21,7 +21,7 @@ router.use(express.static('public'));
 router.use(modelFinder);
 
 router.use(
-  methodOverride((request, response) => {
+  methodOverride((request, response) => { // eslint-disable-line no-unused-vars
     if (request.body && typeof request.body === 'object' && '_method' in request.body) {
       // look in urlencoded POST bodies and delete it
       let method = request.body._method;
@@ -105,7 +105,7 @@ function updateBook(request, response) {
 
   request.model
     .put(body, id)
-    .then(result => response.redirect(`/books/${id}`))
+    .then(result => response.redirect(`/books/${id}`)) // eslint-disable-line no-unused-vars
     .catch(err => handleError(err, response));
 }
 
@@ -114,7 +114,8 @@ function deleteBook(request, response) {
   const { id } = request.params;
   request.model
     .delete(id)
-    .then(result => response.redirect('/'))
+    .then(result => response.redirect('/')) // eslint-disable-line no-unused-vars
+
     .catch(err => handleError(err, response));
 }
 
