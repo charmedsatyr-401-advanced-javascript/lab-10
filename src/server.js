@@ -13,6 +13,9 @@ app.set('view engine', 'ejs');
 
 app.use(router);
 
+/**
+ * @param  {number} port
+ */
 module.exports = {
   start: port => app.listen(port, () => console.log(`Listening on port: ${port}`)),
 };

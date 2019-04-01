@@ -11,7 +11,7 @@
 * [front end](https://shielded-crag-86438.herokuapp.com/)
 
 #### Documentation
-* [jsdoc] *Coming soon!*
+* [jsdoc](https://shielded-crag-86438.herokuapp.com/docs)
 * [swagger] *Coming soon!*
 
 ### Modules
