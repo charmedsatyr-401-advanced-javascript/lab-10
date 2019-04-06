@@ -1,0 +1,208 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Book App",
+    "description": "Application that will allow users to upload and review books",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://shielded-crag-86438.herokuapp.com/"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "Get all books",
+        "responses": {
+          "200": {
+            "description": "Return a list of book entries",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Books"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searches":{
+      "post": {
+        "description": "Post a search",
+        "responses": {
+          "200": {
+            "description": "Search successfully posted",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/x-www-urlencoded": {
+              "schema": {
+                "type": "string" 
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searches/new": {
+      "get": {
+        "description": "Search for new books",
+        "responses": {
+          "200": {
+            "description": "See a search form to enter a title or author",
+            "content": {
+              "*/*": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/books/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "description": "Get a single book by {id}",
+        "responses": {
+          "200": {
+            "description": "Return a single book from the collection with a list of shelves",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put":{
+        "description": "Modify a book entry with the given {id}",
+        "responses": {
+          "200": {
+            "description": "Return a modified book entry",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete":{
+        "responses": {
+          "200": {
+            "description": "Return an empty object",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/books": {
+      "post": {
+        "description": "Add a book to the collection",
+        "requestBody": {
+          "content": {
+            "application/x-www-urlformencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/BookPost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returned the created book",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Books": {
+        "type": "array",
+        "example": [
+          {
+            "rowCount": 2,
+            "rows": [
+              {},
+              {}
+            ]
+          }
+        ]
+      },
+      "Book": {
+        "type": "array",
+        "example": [
+          {
+            "rowCount": 1,
+            "rows": [
+              {}
+            ]
+          },
+          {
+            "rowCount": 1,
+            "rows": [
+              {}
+            ]
+          }
+        ]
+      },
+      "BookPost": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "bookshelf": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
