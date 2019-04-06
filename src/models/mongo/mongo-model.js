@@ -3,7 +3,7 @@
 const bookshelfSchema = require('./bookshelf/bookshelf-schema.js');
 
 /**
- * @param  {oject} schema
+ * @param  {object} schema
  */
 class MongoModel {
   constructor(schema) {
@@ -68,7 +68,11 @@ class MongoModel {
   put(body, id) {
     const { title, author, isbn, image_url, description, bookshelf_id } = body;
     return this.schema
-      .findByIdAndUpdate(id, { title, author, isbn, image_url, description, bookshelf_id })
+      .findByIdAndUpdate(
+        id,
+        { title, author, isbn, image_url, description, bookshelf_id },
+        { new: true }
+      )
       .then(book => {
         const data = { rows: [book], rowCount: [book].length };
         return new Promise(resolve => resolve(data));
