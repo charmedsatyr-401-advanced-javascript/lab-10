@@ -172,12 +172,21 @@ Exports an instance of a `Books` model that extends the class `SQLModel` from `.
   * `npm run lint`
 
 * What assertions were made?
-None!
+  * `books` instance of `MongoModel`
+    * It can post() a new book
+    * It can get() a book
+    * It can put() a book modification
+    * It can delete() a book
 
 * What assertions need to be / should be made?
-  * All methods and helper functions for the models `SQLModel` and `MongoModel` classes should be tested.
+  * All methods and helper functions for the models `SQLModel` should be tested. However, I am unaware of an equivalent of `mongodb-memory-server` for SQL that would allow testing without altering the database.
+  * Additional confirmation tests that might be performed for `books` model include:
+    * Should test `bookshelf_id` separately in `get()` (would be an additional test of correct join of book/bookshelf models on `bookshelf_id`)
+    * Should test `get()` method without arguments
+    * Should confirm `bookshelf_id` is the same before and after `put()`
+    * Should `get` all books after `delete()` to confirm book deleted
 
-  * End-to-end testing should be performed on the server and routes.
+  * End-to-end testing should be performed on the server and routes using `supertest`.
 
 
 #### UML
